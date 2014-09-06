@@ -7,14 +7,6 @@ class LoLCounterScraper extends AbstractScraper {
 	const CHAMPIONS_URL = 'http://www.lolcounter.com/champions';
 	const CHAMPION_URL = 'http://www.lolcounter.com/champions/';
 
-	protected $roles = [
-		'Top' => 'top',
-		'Mid' => 'mid',
-		'Jungler' => 'jungler',
-		'Physical Damage' => 'adc',
-		'Support' => 'support',
-	];
-
 	protected $championIds = [];
 
 	public function scrape() {
@@ -55,13 +47,21 @@ class LoLCounterScraper extends AbstractScraper {
 		$url = self::CHAMPION_URL . $champion->name;
 		$crawler = $this->client->request('GET', $url);
 		
-		$crawler->filter('div.roles div.role, div.lanes div.lane')->each(function($node) use ($champion) {
-			$role = $node->text();
-
-			if (isset($this->roles[$role])) {
-				$champion->{$this->roles[$role]} = true;
-			}
+		$rawRoles = $crawler->filter('div.roles div.role, div.lanes div.lane')->each(function($node) {
+			return $node->text();
 		});
+
+		$roles = [
+			'top' => in_array('Top', $rawRoles),
+			'mid' => in_array('Mid', $rawRoles),
+			'jungler' => in_array('Jungler', $rawRoles),
+			'support' => in_array('Support', $rawRoles),
+			'adc' => in_array('Physical Damage', $rawRoles) and in_array('Bottom', $rawRoles)
+		];
+
+		foreach($roles as $role => $value) {
+			$champion->$role = $value;
+		}
 	}
 
 	protected function crawlThroughChampions($champion, $type) {
