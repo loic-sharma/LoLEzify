@@ -15,6 +15,11 @@ class CreateChampionsTable extends Migration {
 		Schema::create('champions', function(Blueprint $table) {
 			$table->increments('id');
 			$table->string('name');
+			$table->boolean('top');
+			$table->boolean('mid');
+			$table->boolean('jungler');
+			$table->boolean('adc');
+			$table->boolean('support');
 		});
 	}
 
