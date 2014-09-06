@@ -54,6 +54,10 @@ class Recommender {
 		$preparedRecommendations = [];
 
 		foreach ($recommendations as $championId => $score) {
+			if (count($preparedRecommendations) >= 5 and $score < 0) {
+				break;
+			}
+
 			array_push($preparedRecommendations, [
 				'champion' => $this->store->find($championId),
 				'score' => $score
