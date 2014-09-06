@@ -1,5 +1,7 @@
 <?php
 
+use App\Recommendation\Recommender;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -11,4 +13,21 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
+Route::get('recommend.json', function(Request $request) {
+	$repository = new \App\Champion\Repository;
+	$store = new \App\Champion\Store($repository);
+
+	$recommender = new Recommender($repository, $store);
+
+	$recommender->addCritic(new \App\Recommendation\Critics\BasicEnemyCritic($repository, $store));
+	$recommender->addCritic(new \App\Recommendation\Critics\BasicAllyCritic($repository, $store));
+	$recommender->addCritic(new \App\Recommendation\Critics\CounterCritic($repository, $store));
+	
+	$role = Request::query('role', 'mid');
+	$allies = explode(',', Request::query('allies'));
+	$enemies = explode(',', Request::query('enemies'));
+
+	$recommendations = $recommender->recommend($allies, $enemies, $role);
+	
+	return $recommendations;
+});
