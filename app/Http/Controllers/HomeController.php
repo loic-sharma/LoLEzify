@@ -1,6 +1,6 @@
 <?php namespace App\Http\Controllers;
 
-use App\Recommender;
+use App\Recommendation\Recommender;
 use Illuminate\Routing\Controller;
 
 class HomeController extends Controller {
@@ -20,15 +20,33 @@ class HomeController extends Controller {
 
 	public function index()
 	{
-		$recommender = new Recommender;
 
-		$recommender->setRole('mid');
-		$recommender->setAllies([
-			8
-		]);
-		$recommender->setEnemies([
+		$repository = new \App\Champion\Repository;
+		$store = new \App\Champion\Store($repository);
+
+		$recommender = new Recommender($repository, $store);
+
+		$recommender->addCritic(new \App\Recommendation\Critics\BasicEnemyCritic($repository, $store));
+		$recommender->addCritic(new \App\Recommendation\Critics\BasicAllyCritic($repository, $store));
+		$recommender->addCritic(new \App\Recommendation\Critics\CounterCritic($repository, $store));
+		
+		$allies = [
+			16
+		];
+
+		$enemies = [
+			8,
 			13
-		]);
+		];
+
+		$recommendations = $recommender->recommend($allies, $enemies, 'mid');
+		
+		foreach ($recommendations as $recommendation) {
+			echo "Name: " . $recommendation['champion']->name . "<br>";
+			echo "Score: " . $recommendation['score'] . "<br>";
+		}
+
+		return;
 
 		return view('hello');
 	}

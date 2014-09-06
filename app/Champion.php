@@ -44,4 +44,40 @@ class Champion extends Model {
 	public function mutualistic() {
 		return $this->belongsToMany('App\Champion', 'mutualistic', 'champion_id', 'ally_champion_id');
 	}
+
+	public function isSameLaneAs(Champion $champion) {
+		if ($this->top and $champion->top) {
+			return true;
+		}
+
+		if ($this->mid and $champion->mid) {
+			return true;
+		}
+
+		if ($this->adc or $this->support) {
+			return ($champion->adc or $champion->support);
+		}
+	}
+
+	public function loses(Champion $champion) {
+		return $this->relationshipContainsChampion('weaknesses', $champion);
+	}
+
+	public function beats(Champion $champion) {
+		return $this->relationshipContainsChampion('strengths', $champion);
+	}
+
+	public function alliesWellWith(Champion $champion) {
+		return $this->relationshipContainsChampion('mutualistic', $champion);
+	}
+
+	protected function relationshipContainsChampion($relationship, Champion $needle) {
+		foreach ($this->$relationship as $champion) {
+			if ($champion->id == $needle->id) {
+				return true;
+			}
+		}
+
+		return false;		
+	}
 }
