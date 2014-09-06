@@ -11,58 +11,37 @@ class Champion extends Model {
 	 */
 	protected $table = 'champions';
 
+	/**
+	 * Indicates if the model should be timestamped.
+	 *
+	 * @var bool
+	 */
+	public $timestamps = false;
+
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = ['name'];
+
+	public function getNameAttribute($name) {
+		return ucfirst($name);
+	}
+
 	public function setNameAttribute($name) {
 		$this->attributes['name'] = strtolower($name);
 	}
 
 	public function weaknesses() {
-		return $this->belongsToMany('Champion', 'weaknesses', 'champion_id', 'weakness_id');
-	}
-
-	public function setWeaknessesAttribute(array $champions) {
-		$ids = $this->transformChampionsToIds($champions);
-
-		$this->weaknesses()->sync($ids);
+		return $this->belongsToMany('App\Champion', 'weaknesses', 'champion_id', 'weakness_id');
 	}
 
 	public function strengths() {
-		return $this->belongsToMany('Champion', 'strengths', 'champion_id', 'strength_id');
-	}
-
-	public function setStrengthsAttribute(array $champions) {
-		$ids = $this->transformChampionsToIds($champions);
-
-		$this->strengths()->sync($ids);
+		return $this->belongsToMany('App\Champion', 'strengths', 'champion_id', 'strength_id');
 	}
 
 	public function mutualistic() {
-		return $this->belongsToMany('Champion', 'mutualistic', 'champion_id', 'ally_champion_id');
-	}
-
-	public function setMutualisticAttribute(array $champions) {
-		$ids = $this->transformChampionsToIds($champions);
-
-		$this->mutualistic()->sync($ids);
-	}
-
-	protected function transformChampionsToIds(array $champions) {
-		if (count($champions) > 0) {
-			if (is_int($champions[0])) {
-				return $champions;
-			}
-			elseif (is_string($champions[0])) {
-				$champions = $this->where('name', $champions)->get();
-			}
-		}
-
-		$ids = [];
-
-		foreach ($champions as $champion) {
-			if ($champion instanceof Champion) {
-				$ids += $champion->id;
-			}
-		}
-
-		return $ids;
+		return $this->belongsToMany('App\Champion', 'mutualistic', 'champion_id', 'ally_champion_id');
 	}
 }

@@ -12,7 +12,7 @@ class ArtisanServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->commands('App\Console\InspireCommand');
+		$this->commands('App\Console\ScrapeCommand');
 	}
 
 }
