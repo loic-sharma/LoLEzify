@@ -1,6 +1,6 @@
 <?php namespace App\Scrapers;
 
-use App\Champion;
+use App\Champion\Model as Champion;
 
 class LoLCounterScraper extends AbstractScraper {
 
