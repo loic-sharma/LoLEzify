@@ -1,6 +1,6 @@
 <?php namespace App\Recommendation\Critics;
 
-use App\Champion;
+use App\Champion\Model as Champion;
 
 class BasicEnemyCritic extends AbstractCritic {
 

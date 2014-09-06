@@ -1,8 +1,8 @@
-<?php namespace App;
+<?php namespace App\Champion;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 
-class Champion extends Model {
+class Model extends EloquentModel {
 
 	/**
 	 * The database table used by the model.
@@ -34,18 +34,18 @@ class Champion extends Model {
 	}
 
 	public function weaknesses() {
-		return $this->belongsToMany('App\Champion', 'weaknesses', 'champion_id', 'weakness_id');
+		return $this->belongsToMany('App\Champion\Model', 'weaknesses', 'champion_id', 'weakness_id');
 	}
 
 	public function strengths() {
-		return $this->belongsToMany('App\Champion', 'strengths', 'champion_id', 'strength_id');
+		return $this->belongsToMany('App\Champion\Model', 'strengths', 'champion_id', 'strength_id');
 	}
 
 	public function mutualistic() {
-		return $this->belongsToMany('App\Champion', 'mutualistic', 'champion_id', 'ally_champion_id');
+		return $this->belongsToMany('App\Champion\Model', 'mutualistic', 'champion_id', 'ally_champion_id');
 	}
 
-	public function isSameLaneAs(Champion $champion) {
+	public function isSameLaneAs(Model $champion) {
 		if ($this->top and $champion->top) {
 			return true;
 		}
@@ -59,19 +59,19 @@ class Champion extends Model {
 		}
 	}
 
-	public function loses(Champion $champion) {
+	public function loses(Model $champion) {
 		return $this->relationshipContainsChampion('weaknesses', $champion);
 	}
 
-	public function beats(Champion $champion) {
+	public function beats(Model $champion) {
 		return $this->relationshipContainsChampion('strengths', $champion);
 	}
 
-	public function alliesWellWith(Champion $champion) {
+	public function alliesWellWith(Model $champion) {
 		return $this->relationshipContainsChampion('mutualistic', $champion);
 	}
 
-	protected function relationshipContainsChampion($relationship, Champion $needle) {
+	protected function relationshipContainsChampion($relationship, Model $needle) {
 		foreach ($this->$relationship as $champion) {
 			if ($champion->id == $needle->id) {
 				return true;

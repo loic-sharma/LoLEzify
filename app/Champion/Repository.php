@@ -1,16 +1,15 @@
 <?php namespace App\Champion;
 
 use DB;
-use App\Champion;
 
 class Repository {
 
 	public function find($id) {
-		return Champion::find($id);
+		return Model::find($id);
 	}
 
 	public function get(array $ids) {
-		return Champion::whereIn('id', $ids)->get();
+		return Model::whereIn('id', $ids)->get();
 	}
 
 	public function findPlayerChampions($player) {
