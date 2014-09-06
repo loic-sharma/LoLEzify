@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Recommender;
 use Illuminate\Routing\Controller;
 
 class HomeController extends Controller {
@@ -19,6 +20,16 @@ class HomeController extends Controller {
 
 	public function index()
 	{
+		$recommender = new Recommender;
+
+		$recommender->setRole('mid');
+		$recommender->setAllies([
+			8
+		]);
+		$recommender->setEnemies([
+			13
+		]);
+
 		return view('hello');
 	}
 
